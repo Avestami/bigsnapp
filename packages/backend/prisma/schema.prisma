@@ -1,0 +1,461 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum UserType {
+  DRIVER
+  RIDER
+  ADMIN
+}
+
+enum PaymentStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+  REFUNDED
+}
+
+enum PaymentMethodType {
+  WALLET
+  CREDIT_CARD
+  CASH
+  BANK_TRANSFER
+}
+
+enum WalletTransactionType {
+  TOPUP
+  PAYMENT
+  PAYOUT
+  REFUND
+  PENALTY
+}
+
+enum DeliveryRequestStatus {
+  PENDING
+  ASSIGNED
+  PICKED_UP
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+}
+
+enum RideStatus {
+  PENDING
+  ASSIGNED
+  DRIVER_ARRIVED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum DeviceType {
+  ANDROID
+  IOS
+  WEB
+}
+
+// Models
+model User {
+  id           Int       @id @default(autoincrement()) @map("user_id")
+  name         String?   @db.VarChar(100)
+  passwordHash String?   @map("password_hash")
+  email        String?   @unique @db.VarChar(255)
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @default(now()) @updatedAt @map("updated_at")
+  userType     UserType  @map("user_type")
+  phoneNumber  String?   @unique @map("phone_number") @db.VarChar(15)
+  walletId     Int?      @unique @map("wallet_id")
+  
+  // Relations
+  wallet              Wallet?              @relation(fields: [walletId], references: [id])
+  driver              Driver?
+  ridesAsRider        Ride[]               @relation("RiderRides")
+  deliveriesAsSender  DeliveryRequest[]    @relation("SenderDeliveries")
+  deliveriesAsReceiver DeliveryRequest[]   @relation("ReceiverDeliveries")
+  payments            Payment[]
+  devices             UserDevice[]
+  favoriteLocations   FavoriteLocation[]
+  logs                Log[]
+  rideReviews         RideReview[]         @relation("ReviewerRideReviews")
+  deliveryReviews     DeliveryReview[]     @relation("ReviewerDeliveryReviews")
+  adminActions        AdminActionLog[]     @relation("AdminActions")
+  targetAdminActions  AdminActionLog[]     @relation("TargetUserActions")
+  
+  @@map("user")
+  @@index([email])
+  @@index([phoneNumber])
+  @@index([userType])
+}
+
+model Wallet {
+  id          Int      @id @default(autoincrement()) @map("wallet_id")
+  userId      Int?     @map("user_id")
+  balanceRial BigInt   @default(0) @map("balance_rial")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+  
+  // Relations
+  user         User?
+  transactions WalletTransaction[]
+  topupRequests TopupRequest[]
+  
+  @@map("wallet")
+  @@index([userId])
+}
+
+model Driver {
+  id            Int     @id @default(autoincrement()) @map("driver_id")
+  userId        Int     @unique @map("user_id")
+  licenseNumber String  @unique @map("license_number") @db.VarChar(50)
+  isVerified    Boolean @default(false) @map("is_verified")
+  
+  // Relations
+  user               User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicles           Vehicle[]
+  rides              Ride[]
+  deliveryAssignments DeliveryAssignment[]
+  rideReviews        RideReview[]         @relation("TargetDriverRideReviews")
+  deliveryReviews    DeliveryReview[]     @relation("TargetDriverDeliveryReviews")
+  
+  @@map("driver")
+  @@index([userId])
+  @@index([licenseNumber])
+}
+
+model VehicleType {
+  id                Int       @id @default(autoincrement()) @map("type_id")
+  maxWeight         Float?    @map("max_weight")
+  name              String    @db.VarChar(50)
+  passengerCapacity Int?      @map("passenger_capacity")
+  hasCargoBox       Boolean?  @map("has_cargo_box")
+  
+  // Relations
+  vehicles         Vehicle[]
+  deliveryRequests DeliveryRequest[]
+  
+  @@map("vehicle_type")
+}
+
+model VehicleModel {
+  id        Int    @id @default(autoincrement()) @map("model_id")
+  brand     String @db.VarChar(50)
+  modelName String @map("model_name") @db.VarChar(50)
+  
+  // Relations
+  vehicles Vehicle[]
+  
+  @@map("vehiclemodel")
+}
+
+model Vehicle {
+  id            Int    @id @default(autoincrement()) @map("vehicle_id")
+  licensePlate  String @unique @map("license_plate") @db.VarChar(20)
+  driverId      Int    @map("driver_id")
+  color         String @db.VarChar(30)
+  modelId       Int    @map("model_id")
+  vehicleTypeId Int    @map("vehicle_type_id")
+  
+  // Relations
+  driver      Driver       @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  model       VehicleModel @relation(fields: [modelId], references: [id])
+  vehicleType VehicleType  @relation(fields: [vehicleTypeId], references: [id])
+  adminActions AdminActionLog[] @relation("TargetVehicleActions")
+  
+  @@map("vehicle")
+  @@index([driverId])
+  @@index([licensePlate])
+}
+
+model Location {
+  id        Int    @id @default(autoincrement()) @map("location_id")
+  address   String?
+  latitude  Float  @db.DoublePrecision
+  longitude Float  @db.DoublePrecision
+  
+  // Relations
+  ridesAsPickup        Ride[]             @relation("PickupLocation")
+  ridesAsDropoff       Ride[]             @relation("DropoffLocation")
+  deliveriesAsPickup   DeliveryRequest[]  @relation("DeliveryPickupLocation")
+  deliveriesAsDropoff  DeliveryRequest[]  @relation("DeliveryDropoffLocation")
+  favoriteLocations    FavoriteLocation[]
+  
+  @@map("location")
+  @@index([latitude, longitude])
+}
+
+model Ride {
+  id                Int        @id @default(autoincrement()) @map("ride_id")
+  userId            Int        @map("user_id")
+  driverId          Int?       @map("driver_id")
+  fare              BigInt?
+  startTime         DateTime?  @map("start_time")
+  endTime           DateTime?  @map("end_time")
+  pickupLocationId  Int        @map("pickup_location_id")
+  dropOffLocationId Int        @map("drop_off_location")
+  status            RideStatus @default(PENDING)
+  createdAt         DateTime   @default(now()) @map("created_at")
+  updatedAt         DateTime   @default(now()) @updatedAt @map("updated_at")
+  
+  // Relations
+  rider           User        @relation("RiderRides", fields: [userId], references: [id])
+  driver          Driver?     @relation(fields: [driverId], references: [id])
+  pickupLocation  Location    @relation("PickupLocation", fields: [pickupLocationId], references: [id])
+  dropoffLocation Location    @relation("DropoffLocation", fields: [dropOffLocationId], references: [id])
+  payments        Payment[]
+  reviews         RideReview[]
+  statusHistory   RideStatusHistory[]
+  
+  @@map("ride")
+  @@index([userId])
+  @@index([driverId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model RideStatusHistory {
+  rideId     Int      @map("ride_id")
+  statusTime DateTime @map("status_time")
+  status     String
+  
+  // Relations
+  ride Ride @relation(fields: [rideId], references: [id], onDelete: Cascade)
+  
+  @@id([rideId, statusTime])
+  @@map("ride_status_history")
+}
+
+model RideReview {
+  id             Int      @id @default(autoincrement()) @map("review_id")
+  targetDriverId Int      @map("target_driver_id")
+  rideId         Int      @map("ride_id")
+  rating         Int      @db.SmallInt
+  createdAt      DateTime @default(now()) @map("created_at")
+  reviewerId     Int      @map("reviewer_id")
+  comment        String?
+  
+  // Relations
+  targetDriver Driver @relation("TargetDriverRideReviews", fields: [targetDriverId], references: [id])
+  ride         Ride   @relation(fields: [rideId], references: [id])
+  reviewer     User   @relation("ReviewerRideReviews", fields: [reviewerId], references: [id])
+  
+  @@map("ride_review")
+  @@index([targetDriverId])
+  @@index([rideId])
+}
+
+model PaymentMethod {
+  id   Int               @id @default(autoincrement()) @map("method_id")
+  type PaymentMethodType
+  
+  // Relations
+  payments Payment[]
+  
+  @@map("payment_method")
+}
+
+model Payment {
+  id              Int           @id @default(autoincrement()) @map("payment_id")
+  rideId          Int?          @map("ride_id")
+  userId          Int           @map("user_id")
+  amount          BigInt
+  status          PaymentStatus
+  paymentMethodId Int           @map("payment_method_id")
+  paidAt          DateTime?     @map("paid_at")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  
+  // Relations
+  ride          Ride?         @relation(fields: [rideId], references: [id])
+  user          User          @relation(fields: [userId], references: [id])
+  paymentMethod PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+  
+  @@map("payment")
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model UserDevice {
+  id         Int        @id @default(autoincrement()) @map("device_id")
+  deviceType DeviceType @map("device_type")
+  userId     Int        @map("user_id")
+  token      String
+  createdAt  DateTime   @default(now()) @map("created_at")
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("user_device")
+  @@index([userId])
+}
+
+model FavoriteLocation {
+  id         Int    @id @default(autoincrement()) @map("fav_id")
+  locationId Int    @map("location_id")
+  userId     Int    @map("user_id")
+  name       String @db.VarChar(50)
+  
+  // Relations
+  location Location @relation(fields: [locationId], references: [id])
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("favorite_location")
+  @@index([userId])
+}
+
+model Log {
+  id        Int      @id @default(autoincrement()) @map("log_id")
+  userId    Int      @map("user_id")
+  action    String
+  timeStamp DateTime @default(now()) @map("time_stamp")
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+  
+  @@map("log")
+  @@index([userId])
+  @@index([timeStamp])
+}
+
+model DeliveryRequest {
+  id                 Int                   @id @default(autoincrement()) @map("delivery_id")
+  senderId           Int                   @map("sender_id")
+  receiverId         Int                   @map("receiver_id")
+  weightKg           Float                 @map("weight_kg")
+  pickupLocationId   Int                   @map("pickup_location_id")
+  dropOffLocationId  Int                   @map("drop_off_location_id")
+  vehicleTypeId      Int                   @map("vehicle_type_id")
+  valueRial          BigInt                @map("value_rial")
+  status             DeliveryRequestStatus
+  scheduledTime      DateTime?             @map("scheduled_time")
+  createdAt          DateTime              @default(now()) @map("created_at")
+  updatedAt          DateTime              @default(now()) @updatedAt @map("updated_at")
+  
+  // Relations
+  sender            User                   @relation("SenderDeliveries", fields: [senderId], references: [id])
+  receiver          User                   @relation("ReceiverDeliveries", fields: [receiverId], references: [id])
+  pickupLocation    Location               @relation("DeliveryPickupLocation", fields: [pickupLocationId], references: [id])
+  dropoffLocation   Location               @relation("DeliveryDropoffLocation", fields: [dropOffLocationId], references: [id])
+  vehicleType       VehicleType            @relation(fields: [vehicleTypeId], references: [id])
+  assignment        DeliveryAssignment?
+  reviews           DeliveryReview[]
+  statusHistory     DeliveryStatusHistory[]
+  
+  @@map("delivery_request")
+  @@index([senderId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model DeliveryReview {
+  id             Int    @id @default(autoincrement()) @map("review_id")
+  deliveryId     Int    @map("delivery_id")
+  reviewerId     Int    @map("reviewer_id")
+  targetDriverId Int    @map("target_driver_id")
+  rating         Int    @db.SmallInt
+  comment        String?
+  createdAt      DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  delivery     DeliveryRequest @relation(fields: [deliveryId], references: [id])
+  reviewer     User            @relation("ReviewerDeliveryReviews", fields: [reviewerId], references: [id])
+  targetDriver Driver          @relation("TargetDriverDeliveryReviews", fields: [targetDriverId], references: [id])
+  
+  @@map("delivery_review")
+  @@index([deliveryId])
+  @@index([targetDriverId])
+}
+
+model DeliveryAssignment {
+  deliveryId   Int       @id @map("delivery_id")
+  driverId     Int       @map("driver_id")
+  assignedAt   DateTime? @map("assigned_at")
+  pickedUpAt   DateTime? @map("picked_up_at")
+  deliveredAt  DateTime? @map("delivered_at")
+  
+  // Relations
+  delivery DeliveryRequest @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+  driver   Driver          @relation(fields: [driverId], references: [id])
+  
+  @@map("delivery_assignment")
+  @@index([driverId])
+}
+
+model DeliveryStatusHistory {
+  deliveryId Int      @map("delivery_id")
+  statusTime DateTime @map("status_time")
+  status     String
+  
+  // Relations
+  delivery DeliveryRequest @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+  
+  @@id([deliveryId, statusTime])
+  @@map("delivery_status_history")
+}
+
+model WalletTransaction {
+  id            Int                   @id @default(autoincrement()) @map("transaction_id")
+  walletId      Int                   @map("wallet_id")
+  amountRial    BigInt                @map("amount_rial")
+  description   String?
+  type          WalletTransactionType
+  referenceType String?               @map("reference_type") @db.VarChar(20)
+  referenceId   Int?                  @map("reference_id")
+  createdAt     DateTime              @default(now()) @map("created_at")
+  status        PaymentStatus
+  
+  // Relations
+  wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  
+  @@map("wallet_transaction")
+  @@index([walletId])
+  @@index([type])
+  @@index([createdAt])
+  @@index([status])
+}
+
+model TopupRequest {
+  id          Int           @id @default(autoincrement()) @map("topup_id")
+  walletId    Int           @map("wallet_id")
+  amountRial  BigInt        @map("amount_rial")
+  status      PaymentStatus
+  requestedAt DateTime      @default(now()) @map("requested_at")
+  confirmedAt DateTime?     @map("confirmed_at")
+  
+  // Relations
+  wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  
+  @@map("topup_request")
+  @@index([walletId])
+  @@index([status])
+}
+
+model AdminActionLog {
+  id              Int       @id @default(autoincrement()) @map("action_id")
+  adminId         Int       @map("admin_id")
+  actionType      String    @map("action_type") @db.VarChar(50)
+  targetUserId    Int?      @map("target_user")
+  targetVehicleId Int?      @map("target_vehicle_id")
+  details         String?
+  timestamp       DateTime  @default(now())
+  
+  // Relations
+  admin         User     @relation("AdminActions", fields: [adminId], references: [id])
+  targetUser    User?    @relation("TargetUserActions", fields: [targetUserId], references: [id])
+  targetVehicle Vehicle? @relation("TargetVehicleActions", fields: [targetVehicleId], references: [id])
+  
+  @@map("admin_action_log")
+  @@index([adminId])
+  @@index([timestamp])
+}
+
+// Views for normalizing typos
+// Note: Prisma doesn't support views directly, but we can create them via raw SQL in migrations

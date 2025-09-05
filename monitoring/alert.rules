@@ -1,0 +1,152 @@
+groups:
+- name: snappclone.rules
+  rules:
+  # High CPU usage
+  - alert: HighCPUUsage
+    expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High CPU usage detected"
+      description: "CPU usage is above 80% for more than 5 minutes on {{ $labels.instance }}"
+
+  # High memory usage
+  - alert: HighMemoryUsage
+    expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 85
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High memory usage detected"
+      description: "Memory usage is above 85% for more than 5 minutes on {{ $labels.instance }}"
+
+  # Disk space usage
+  - alert: DiskSpaceUsage
+    expr: (node_filesystem_size_bytes{fstype!="tmpfs"} - node_filesystem_free_bytes{fstype!="tmpfs"}) / node_filesystem_size_bytes{fstype!="tmpfs"} * 100 > 90
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Disk space usage is critically high"
+      description: "Disk usage is above 90% on {{ $labels.instance }} filesystem {{ $labels.mountpoint }}"
+
+  # Backend service down
+  - alert: BackendServiceDown
+    expr: up{job="backend"} == 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Backend service is down"
+      description: "Backend service has been down for more than 1 minute"
+
+  # Database connection issues
+  - alert: DatabaseDown
+    expr: up{job="postgres"} == 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "PostgreSQL database is down"
+      description: "PostgreSQL database has been down for more than 1 minute"
+
+  # Redis connection issues
+  - alert: RedisDown
+    expr: up{job="redis"} == 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Redis service is down"
+      description: "Redis service has been down for more than 1 minute"
+
+  # High HTTP error rate
+  - alert: HighHTTPErrorRate
+    expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) * 100 > 5
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High HTTP error rate detected"
+      description: "HTTP 5xx error rate is above 5% for more than 5 minutes"
+
+  # High response time
+  - alert: HighResponseTime
+    expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High response time detected"
+      description: "95th percentile response time is above 2 seconds for more than 5 minutes"
+
+  # Container restart frequency
+  - alert: ContainerHighRestartRate
+    expr: rate(container_start_time_seconds[10m]) * 60 > 1
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Container restarting frequently"
+      description: "Container {{ $labels.name }} is restarting more than once per minute"
+
+  # Database connection pool exhaustion
+  - alert: DatabaseConnectionPoolHigh
+    expr: pg_stat_activity_count / pg_settings_max_connections * 100 > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Database connection pool usage is high"
+      description: "PostgreSQL connection pool usage is above 80%"
+
+  # Redis memory usage
+  - alert: RedisMemoryHigh
+    expr: redis_memory_used_bytes / redis_memory_max_bytes * 100 > 90
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Redis memory usage is high"
+      description: "Redis memory usage is above 90%"
+
+  # SSL certificate expiration
+  - alert: SSLCertificateExpiringSoon
+    expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 30
+    for: 1h
+    labels:
+      severity: warning
+    annotations:
+      summary: "SSL certificate expiring soon"
+      description: "SSL certificate for {{ $labels.instance }} expires in less than 30 days"
+
+  # Load balancer health
+  - alert: LoadBalancerDown
+    expr: probe_success{job="blackbox"} == 0
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Load balancer health check failed"
+      description: "Health check for {{ $labels.instance }} has been failing for more than 2 minutes"
+
+  # API rate limiting triggered
+  - alert: HighAPIRateLimit
+    expr: rate(nginx_http_requests_total{status="429"}[5m]) > 10
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High rate of rate-limited requests"
+      description: "Rate limiting is being triggered frequently (>10 requests/sec for 2 minutes)"
+
+  # Queue length (if using job queues)
+  - alert: HighQueueLength
+    expr: redis_list_length{key=~".*queue.*"} > 1000
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Job queue length is high"
+      description: "Queue {{ $labels.key }} has more than 1000 pending jobs"
