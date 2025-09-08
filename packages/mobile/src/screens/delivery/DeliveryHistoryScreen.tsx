@@ -12,6 +12,7 @@ import {
 import apiService from '../../services/api';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { MainStackParamList } from '../../navigation/types';
+import { useThemedStyles, useThemeColors } from '../../contexts/ThemeContext';
 
 type DeliveryHistoryScreenNavigationProp = NavigationProp<MainStackParamList, 'DeliveryHistory'>;
 
@@ -32,6 +33,8 @@ interface DeliveryHistoryItem {
 }
 
 const DeliveryHistoryScreen: React.FC<Props> = ({ navigation }) => {
+  const themeColors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const [deliveries, setDeliveries] = useState<DeliveryHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -158,17 +161,17 @@ const DeliveryHistoryScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.themeColors.backgroundSecondary,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     padding: 20,
     textAlign: 'center',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
   },
   loadingContainer: {
     flex: 1,
@@ -178,7 +181,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
   },
   emptyContainer: {
     flex: 1,
@@ -188,18 +191,18 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 18,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     marginBottom: 20,
     textAlign: 'center',
   },
   requestButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: theme.themeColors.brand,
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
   },
   requestButtonText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -207,12 +210,12 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   deliveryItem: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.background,
     borderRadius: 8,
     padding: 15,
     marginBottom: 10,
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: theme.themeColors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
@@ -226,7 +229,7 @@ const styles = StyleSheet.create({
   deliveryId: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
   },
   statusBadge: {
     paddingHorizontal: 10,
@@ -234,7 +237,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   statusText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -243,34 +246,34 @@ const styles = StyleSheet.create({
   },
   addressText: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     marginBottom: 2,
   },
   packageText: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     marginBottom: 2,
   },
   recipientText: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
   },
   deliveryFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderTopWidth: 1,
-    borderTopColor: '#eee',
+    borderTopColor: theme.themeColors.border,
     paddingTop: 10,
   },
   dateText: {
     fontSize: 12,
-    color: '#999',
+    color: theme.themeColors.textTertiary,
   },
   costText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#007bff',
+    color: theme.themeColors.brand,
   },
 });
 

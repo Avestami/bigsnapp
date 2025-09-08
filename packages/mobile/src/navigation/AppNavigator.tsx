@@ -10,6 +10,7 @@ import {
   AuthStackParamList,
   MainStackParamList,
   MainTabParamList,
+  DriverTabParamList,
   AdminStackParamList,
   RootStackParamList
 } from './types';
@@ -47,9 +48,15 @@ import AdminOrderManagement from '../screens/admin/AdminOrderManagement';
 import AdminAnalytics from '../screens/admin/AdminAnalytics';
 import AdminSettings from '../screens/admin/AdminSettings';
 
+// Driver screens
+import DriverDashboard from '../screens/driver/DriverDashboard';
+import DriverEarnings from '../screens/driver/DriverEarnings';
+import DriverAvailability from '../screens/driver/DriverAvailability';
+
 const AuthStack = createStackNavigator<AuthStackParamList>();
 const MainStack = createStackNavigator<MainStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
+const DriverTab = createBottomTabNavigator<DriverTabParamList>();
 const AdminStackNav = createStackNavigator<AdminStackParamList>();
 const RootStack = createStackNavigator<RootStackParamList>();
 
@@ -180,7 +187,8 @@ const getTabBarIcon = (routeName: string, focused: boolean) => {
   return icon;
 };
 
-const MainTabNavigator = () => {
+// Rider Tab Navigator (for regular users)
+const RiderTabNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -219,6 +227,56 @@ const MainTabNavigator = () => {
   );
 };
 
+// Driver Tab Navigator (for drivers)
+const DriverTabNavigator = () => {
+  return (
+    <DriverTab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName: string;
+
+          if (route.name === 'Dashboard') {
+            iconName = focused ? 'dashboard' : 'dashboard';
+          } else if (route.name === 'Earnings') {
+            iconName = focused ? 'attach-money' : 'attach-money';
+          } else if (route.name === 'Availability') {
+            iconName = focused ? 'toggle-on' : 'toggle-off';
+          } else if (route.name === 'Settings') {
+            iconName = focused ? 'settings' : 'settings';
+          } else {
+            iconName = 'help';
+          }
+
+          return <Icon name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: '#007AFF',
+        tabBarInactiveTintColor: 'gray',
+      })}
+    >
+      <DriverTab.Screen 
+        name="Dashboard" 
+        component={DriverDashboard}
+        options={{ title: 'Dashboard' }}
+      />
+      <DriverTab.Screen 
+        name="Earnings" 
+        component={DriverEarnings}
+        options={{ title: 'Earnings' }}
+      />
+      <DriverTab.Screen 
+        name="Availability" 
+        component={DriverAvailability}
+        options={{ title: 'Availability' }}
+      />
+      <DriverTab.Screen 
+        name="Settings" 
+        component={SettingsScreen}
+        options={{ title: 'Settings' }}
+      />
+    </DriverTab.Navigator>
+  );
+};
+
 // Loading Screen Component
 const LoadingScreen = () => {
   return (
@@ -228,11 +286,11 @@ const LoadingScreen = () => {
   );
 };
 
-// Main Navigator that wraps tabs with stack for modal screens
-const MainNavigator = () => {
+// Rider Navigator that wraps rider tabs with stack for modal screens
+const RiderNavigator = () => {
   return (
     <RootStack.Navigator screenOptions={{ headerShown: false }}>
-      <RootStack.Screen name="MainTabs" component={MainTabNavigator} />
+      <RootStack.Screen name="MainTabs" component={RiderTabNavigator} />
       <RootStack.Screen 
         name="RideRequest" 
         component={RideRequestScreen}
@@ -279,6 +337,23 @@ const MainNavigator = () => {
   );
 };
 
+// Driver Navigator that wraps driver tabs with stack for modal screens
+const DriverNavigator = () => {
+  return (
+    <RootStack.Navigator screenOptions={{ headerShown: false }}>
+      <RootStack.Screen name="DriverTabs" component={DriverTabNavigator} />
+      <RootStack.Screen 
+        name="RideInProgress" 
+        component={RideInProgressScreen}
+        options={{ 
+          headerShown: true,
+          title: 'Current Ride'
+        }}
+      />
+    </RootStack.Navigator>
+  );
+};
+
 // Navigation Component that uses Auth Context
 const AppNavigation = () => {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -304,9 +379,14 @@ const AppNavigation = () => {
     return <AdminStack />;
   }
 
-  // Default to main navigator for RIDER and DRIVER
-  console.log('👤 AppNavigation: Regular user detected, showing MainNavigator');
-  return <MainNavigator />;
+  if (user?.userType === UserType.DRIVER) {
+    console.log('🚗 AppNavigation: Driver user detected, showing DriverNavigator');
+    return <DriverNavigator />;
+  }
+
+  // Default to rider navigator for RIDER
+  console.log('👤 AppNavigation: Rider user detected, showing RiderNavigator');
+  return <RiderNavigator />;
 };
 
 // Main App Navigator with Auth Provider

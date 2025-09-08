@@ -8,13 +8,21 @@ export type AuthStackParamList = {
   Register: undefined;
 };
 
-// Main Tab Types
+// Main Tab Types (for riders)
 export type MainTabParamList = {
   Home: undefined;
   Delivery: undefined;
   Wallet: undefined;
   Reviews: undefined;
   Favorites: undefined;
+  Settings: undefined;
+};
+
+// Driver Tab Types
+export type DriverTabParamList = {
+  Dashboard: undefined;
+  Earnings: undefined;
+  Availability: undefined;
   Settings: undefined;
 };
 
@@ -45,6 +53,7 @@ export type RootStackParamList = {
   Main: undefined;
   Admin: undefined;
   MainTabs: { screen?: keyof MainTabParamList } | undefined;
+  DriverTabs: { screen?: keyof DriverTabParamList } | undefined;
   RequestDelivery: undefined;
   TrackDelivery: { deliveryId: string };
   DeliveryHistory: undefined;

@@ -7,7 +7,7 @@ import {
   Text,
   Alert,
 } from 'react-native';
-import MapView, { Marker, Region, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, Region } from 'react-native-maps';
 import { locationService, Location } from '../services/locationService';
 
 interface Props {
@@ -36,7 +36,7 @@ const CustomMapView: React.FC<Props> = ({
   style,
 }) => {
   const mapRef = useRef<MapView>(null);
-  const [region, setRegion] = useState<Region>({
+  const [region, setRegion] = useState({
     latitude: initialLocation?.latitude || 28.6139,
     longitude: initialLocation?.longitude || 77.2090,
     latitudeDelta: LATITUDE_DELTA,
@@ -79,7 +79,12 @@ const CustomMapView: React.FC<Props> = ({
       
       // Animate to current location
       if (mapRef.current) {
-        mapRef.current.animateToRegion(newRegion, 1000);
+        mapRef.current.animateToRegion({
+          latitude: location.latitude,
+          longitude: location.longitude,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA,
+        }, 1000);
       }
     } catch (error) {
       console.error('🗺️ MapView: Error getting current location:', error);
@@ -116,13 +121,12 @@ const CustomMapView: React.FC<Props> = ({
   const centerOnCurrentLocation = () => {
     console.log('🗺️ MapView: Centering on current location');
     if (currentLocation && mapRef.current) {
-      const newRegion = {
+      mapRef.current.animateToRegion({
         latitude: currentLocation.latitude,
         longitude: currentLocation.longitude,
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
-      };
-      mapRef.current.animateToRegion(newRegion, 1000);
+      }, 1000);
     } else {
       getCurrentLocation();
     }
@@ -132,19 +136,12 @@ const CustomMapView: React.FC<Props> = ({
     <View style={[styles.container, style]}>
       <MapView
         ref={mapRef}
-        provider={PROVIDER_GOOGLE}
         style={styles.map}
         region={region}
-        onRegionChange={handleRegionChange}
         onPress={handleMapPress}
-        showsUserLocation={showCurrentLocation}
+        onRegionChangeComplete={handleRegionChange}
+        showsUserLocation={true}
         showsMyLocationButton={false}
-        showsCompass={true}
-        showsScale={true}
-        zoomEnabled={true}
-        scrollEnabled={true}
-        pitchEnabled={true}
-        rotateEnabled={true}
       >
         {/* Current location marker */}
         {currentLocation && (
@@ -154,11 +151,13 @@ const CustomMapView: React.FC<Props> = ({
               longitude: currentLocation.longitude,
             }}
             title="Current Location"
-            description={currentLocation.address}
-            pinColor="blue"
-          />
+          >
+            <View style={styles.currentLocationMarker}>
+              <Text style={styles.markerText}>📍</Text>
+            </View>
+          </Marker>
         )}
-
+        
         {/* Selected location marker */}
         {selectedLocation && (
           <Marker
@@ -167,12 +166,14 @@ const CustomMapView: React.FC<Props> = ({
               longitude: selectedLocation.longitude,
             }}
             title="Selected Location"
-            description={selectedLocation.address}
-            pinColor="red"
-          />
+          >
+            <View style={styles.selectedLocationMarker}>
+              <Text style={styles.markerText}>📌</Text>
+            </View>
+          </Marker>
         )}
-
-        {/* Custom markers */}
+        
+        {/* Additional markers */}
         {markers.map((marker) => (
           <Marker
             key={marker.id}
@@ -180,9 +181,13 @@ const CustomMapView: React.FC<Props> = ({
               latitude: marker.location.latitude,
               longitude: marker.location.longitude,
             }}
-            title={marker.title}
+            title={marker.title || "Marker"}
             description={marker.description}
-          />
+          >
+            <View style={styles.customMarker}>
+              <Text style={styles.markerText}>📍</Text>
+            </View>
+          </Marker>
         ))}
       </MapView>
 
@@ -230,6 +235,40 @@ const styles = StyleSheet.create({
   },
   currentLocationButtonText: {
     fontSize: 20,
+  },
+  currentLocationMarker: {
+    backgroundColor: '#4285F4',
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: '#fff',
+  },
+  selectedLocationMarker: {
+    backgroundColor: '#EA4335',
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: '#fff',
+  },
+  customMarker: {
+    backgroundColor: '#34A853',
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: '#fff',
+  },
+  markerText: {
+    fontSize: 16,
+    color: '#fff',
   },
 });
 

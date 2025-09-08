@@ -15,6 +15,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import apiService from '../../services/api';
+import { useThemedStyles, useThemeColors } from '../../contexts/ThemeContext';
 
 interface FavoriteLocation {
   id: string;
@@ -40,6 +41,8 @@ interface FavoriteDriver {
 
 const FavoritesScreen: React.FC = () => {
   const navigation = useNavigation();
+  const themeColors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const [activeTab, setActiveTab] = useState<'LOCATIONS' | 'DRIVERS'>('LOCATIONS');
   const [favoriteLocations, setFavoriteLocations] = useState<FavoriteLocation[]>([
     {
@@ -490,37 +493,37 @@ const FavoritesScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.themeColors.background,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.surface,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
   },
   addButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.themeColors.brand,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
   },
   addButtonText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 14,
     fontWeight: '600',
   },
   tabContainer: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.surface,
     paddingHorizontal: 20,
     paddingBottom: 20,
   },
@@ -529,26 +532,26 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: theme.themeColors.backgroundSecondary,
     marginHorizontal: 4,
     alignItems: 'center',
   },
   activeTab: {
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.themeColors.brand,
   },
   tabText: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     fontWeight: '500',
   },
   activeTabText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
   },
   content: {
     flex: 1,
   },
   favoritesContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.surface,
     margin: 20,
     borderRadius: 16,
     padding: 20,
@@ -568,7 +571,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#f0f8ff',
+    backgroundColor: theme.themeColors.brandLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -580,7 +583,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.themeColors.brand,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -588,7 +591,7 @@ const styles = StyleSheet.create({
   driverInitial: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
+    color: theme.themeColors.textInverse,
   },
   favoriteDetails: {
     flex: 1,
@@ -596,18 +599,18 @@ const styles = StyleSheet.create({
   favoriteName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     marginBottom: 4,
   },
   favoriteAddress: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     lineHeight: 18,
     marginBottom: 4,
   },
   driverVehicle: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     marginBottom: 4,
   },
   driverStats: {
@@ -617,16 +620,16 @@ const styles = StyleSheet.create({
   },
   driverRating: {
     fontSize: 12,
-    color: '#333',
+    color: theme.themeColors.textPrimary,
   },
   driverRides: {
     fontSize: 12,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     marginLeft: 4,
   },
   favoriteDate: {
     fontSize: 12,
-    color: '#999',
+    color: theme.themeColors.textTertiary,
   },
   favoriteActions: {
     flexDirection: 'row',
@@ -636,7 +639,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.themeColors.brand,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -644,14 +647,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   removeButton: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: theme.themeColors.error,
   },
   removeButtonText: {
     fontSize: 14,
   },
   favoriteSeparator: {
     height: 1,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: theme.themeColors.backgroundSecondary,
     marginVertical: 8,
   },
   emptyContainer: {
@@ -664,25 +667,25 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 18,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     fontWeight: '600',
     marginBottom: 8,
   },
   emptySubtext: {
     fontSize: 14,
-    color: '#999',
+    color: theme.themeColors.textTertiary,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: 24,
   },
   emptyButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.themeColors.brand,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
   },
   emptyButtonText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -693,7 +696,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.surface,
     borderRadius: 16,
     padding: 24,
     width: '90%',
@@ -702,7 +705,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     textAlign: 'center',
     marginBottom: 24,
   },
@@ -712,16 +715,16 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     marginBottom: 8,
   },
   textInput: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: theme.themeColors.border,
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: theme.themeColors.backgroundSecondary,
   },
   textArea: {
     height: 80,
@@ -734,21 +737,21 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: theme.themeColors.border,
     borderRadius: 8,
     alignItems: 'center',
   },
   locationTypeOptionActive: {
-    borderColor: '#007AFF',
-    backgroundColor: '#f0f8ff',
+    borderColor: theme.themeColors.brand,
+    backgroundColor: theme.themeColors.brandLight,
   },
   locationTypeOptionText: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     fontWeight: '500',
   },
   locationTypeOptionTextActive: {
-    color: '#007AFF',
+    color: theme.themeColors.brand,
   },
   modalActions: {
     flexDirection: 'row',
@@ -757,30 +760,30 @@ const styles = StyleSheet.create({
   },
   modalCancelButton: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: theme.themeColors.backgroundSecondary,
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
   },
   modalCancelText: {
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     fontSize: 16,
     fontWeight: '600',
   },
   modalConfirmButton: {
     flex: 1,
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.themeColors.brand,
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
   },
   modalConfirmText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 16,
     fontWeight: '600',
   },
   buttonDisabled: {
-    backgroundColor: '#ccc',
+    backgroundColor: theme.themeColors.disabled,
   },
 });
 

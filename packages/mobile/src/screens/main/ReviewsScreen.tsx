@@ -15,6 +15,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import apiService from '../../services/api';
+import { useThemedStyles, useThemeColors } from '../../contexts/ThemeContext';
 
 interface Review {
   id: string;
@@ -43,6 +44,8 @@ interface ReviewStats {
 
 const ReviewsScreen: React.FC = () => {
   const navigation = useNavigation();
+  const themeColors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const sampleReviews: Review[] = [
     {
       id: '1',
@@ -488,10 +491,10 @@ const ReviewsScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.themeColors.background,
   },
   content: {
     flex: 1,
@@ -501,12 +504,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.surface,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
   },
   addReviewButton: {
     backgroundColor: '#007AFF',
@@ -520,7 +523,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   statsCard: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.surface,
     margin: 20,
     padding: 20,
     borderRadius: 16,
@@ -535,12 +538,12 @@ const styles = StyleSheet.create({
   averageRatingNumber: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     marginBottom: 8,
   },
   totalReviews: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     marginTop: 8,
   },
   ratingDistribution: {
@@ -577,7 +580,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   filtersContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.surface,
     marginHorizontal: 20,
     marginBottom: 20,
     padding: 20,
@@ -586,7 +589,7 @@ const styles = StyleSheet.create({
   filtersTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     marginBottom: 12,
   },
   filterButtons: {
@@ -611,7 +614,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   reviewsList: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.surface,
     marginHorizontal: 20,
     marginBottom: 20,
     borderRadius: 16,
@@ -703,12 +706,12 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     marginBottom: 4,
   },
   emptySubtext: {
     fontSize: 14,
-    color: '#999',
+    color: theme.themeColors.textTertiary,
   },
   starsContainer: {
     flexDirection: 'row',
@@ -727,7 +730,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.surface,
     borderRadius: 16,
     padding: 24,
     width: '90%',
@@ -737,7 +740,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     textAlign: 'center',
     marginBottom: 24,
   },
@@ -747,16 +750,17 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     marginBottom: 8,
   },
   textInput: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: theme.themeColors.border,
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: theme.themeColors.backgroundSecondary,
+    color: theme.themeColors.textPrimary,
   },
   textArea: {
     height: 100,
@@ -771,21 +775,21 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: theme.themeColors.border,
     borderRadius: 8,
     alignItems: 'center',
   },
   serviceTypeOptionActive: {
-    borderColor: '#007AFF',
-    backgroundColor: '#f0f8ff',
+    borderColor: theme.themeColors.brand,
+    backgroundColor: theme.themeColors.brandLight,
   },
   serviceTypeOptionText: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     fontWeight: '500',
   },
   serviceTypeOptionTextActive: {
-    color: '#007AFF',
+    color: theme.themeColors.brand,
   },
   modalActions: {
     flexDirection: 'row',
@@ -794,30 +798,30 @@ const styles = StyleSheet.create({
   },
   modalCancelButton: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: theme.themeColors.backgroundSecondary,
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
   },
   modalCancelText: {
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     fontSize: 16,
     fontWeight: '600',
   },
   modalSubmitButton: {
     flex: 1,
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.themeColors.brand,
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
   },
   modalSubmitText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 16,
     fontWeight: '600',
   },
   buttonDisabled: {
-    backgroundColor: '#ccc',
+    backgroundColor: theme.themeColors.disabled,
   },
 });
 

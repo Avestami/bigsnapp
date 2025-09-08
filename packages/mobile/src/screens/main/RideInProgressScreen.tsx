@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { MainStackParamList } from '../../navigation/types';
+import { useThemedStyles, useThemeColors } from '../../contexts/ThemeContext';
 
 interface Driver {
   id: string;
@@ -33,6 +34,8 @@ interface RideStatus {
 
 const RideInProgressScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<MainStackParamList>>();
+  const themeColors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const [rideStatus, setRideStatus] = useState<RideStatus>({
     id: 'ride_123',
     status: 'REQUESTED',
@@ -238,10 +241,10 @@ const RideInProgressScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.background,
     padding: 20,
   },
   header: {
@@ -267,7 +270,7 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
   },
   statusContainer: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: theme.themeColors.surface,
     padding: 16,
     borderRadius: 8,
     marginBottom: 20,
@@ -278,10 +281,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   locationContainer: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: theme.themeColors.surface,
     padding: 20,
     borderRadius: 12,
     marginBottom: 20,
+    shadowColor: theme.themeColors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   locationItem: {
     flexDirection: 'row',
@@ -291,17 +299,17 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: '#34C759',
+    backgroundColor: theme.themeColors.success,
     marginTop: 4,
     marginRight: 12,
   },
   destinationDot: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: theme.themeColors.error,
   },
   locationLine: {
     width: 2,
     height: 20,
-    backgroundColor: '#ddd',
+    backgroundColor: theme.themeColors.border,
     marginLeft: 5,
     marginVertical: 8,
   },
@@ -310,18 +318,18 @@ const styles = StyleSheet.create({
   },
   locationLabel: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     marginBottom: 4,
   },
   locationAddress: {
     fontSize: 16,
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     fontWeight: '500',
   },
   driverContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f8f9fa',
+    backgroundColor: theme.themeColors.backgroundSecondary,
     padding: 16,
     borderRadius: 12,
     marginBottom: 20,
@@ -335,13 +343,13 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.themeColors.brand,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
   },
   driverInitial: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 20,
     fontWeight: 'bold',
   },
@@ -351,12 +359,12 @@ const styles = StyleSheet.create({
   driverName: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     marginBottom: 4,
   },
   vehicleInfo: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     marginBottom: 4,
   },
   ratingContainer: {
@@ -365,14 +373,14 @@ const styles = StyleSheet.create({
   },
   rating: {
     fontSize: 14,
-    color: '#FF9500',
+    color: theme.themeColors.warning,
     fontWeight: '600',
   },
   callButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#34C759',
+    backgroundColor: theme.themeColors.success,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -383,53 +391,53 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#f0f8ff',
+    backgroundColor: theme.themeColors.brandLight,
     padding: 16,
     borderRadius: 8,
     marginBottom: 20,
   },
   fareLabel: {
     fontSize: 16,
-    color: '#333',
+    color: theme.themeColors.textPrimary,
   },
   fareAmount: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#007AFF',
+    color: theme.themeColors.brand,
   },
   actionContainer: {
     marginTop: 'auto',
   },
   cancelButton: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: theme.themeColors.error,
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
   },
   cancelButtonText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 16,
     fontWeight: '600',
   },
   completeButton: {
-    backgroundColor: '#34C759',
+    backgroundColor: theme.themeColors.success,
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
   },
   completeButtonText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 16,
     fontWeight: '600',
   },
   newRideButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.themeColors.brand,
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
   },
   newRideButtonText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 16,
     fontWeight: '600',
   },

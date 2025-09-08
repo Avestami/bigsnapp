@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import apiService from '../../services/api';
+import { useThemedStyles, useThemeColors } from '../../contexts/ThemeContext';
 
 interface DeliveryPartner {
   id: string;
@@ -38,6 +39,8 @@ interface DeliveryDetails {
 
 const DeliveryInProgressScreen: React.FC = () => {
   const navigation = useNavigation();
+  const themeColors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const [delivery, setDelivery] = useState<DeliveryDetails | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -332,10 +335,10 @@ const DeliveryInProgressScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.background,
   },
   content: {
     flex: 1,
@@ -348,11 +351,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
   },
   trackingCode: {
     fontSize: 16,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     marginTop: 4,
   },
   statusContainer: {
@@ -432,7 +435,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     marginBottom: 12,
   },
   partnerInfo: {
@@ -476,6 +479,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   locationContainer: {
+    backgroundColor: theme.themeColors.backgroundSecondary,
+    borderRadius: 8,
+    padding: 16,
     marginBottom: 16,
   },
   locationItem: {
@@ -483,14 +489,14 @@ const styles = StyleSheet.create({
   },
   locationLabel: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     marginBottom: 4,
   },
   locationAddress: {
     fontSize: 16,
-    color: '#333',
-  },
-  packageInfo: {
+    color: theme.themeColors.textPrimary,
+    fontWeight: '500',
+  },packageInfo: {
     marginBottom: 16,
   },
   packageItem: {
@@ -500,11 +506,11 @@ const styles = StyleSheet.create({
   },
   packageLabel: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
   },
   packageValue: {
     fontSize: 14,
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     fontWeight: '500',
     flex: 1,
     textAlign: 'right',
@@ -515,14 +521,14 @@ const styles = StyleSheet.create({
   recipientTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     marginBottom: 8,
   },
   recipientRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#f9f9f9',
+    backgroundColor: theme.themeColors.backgroundSecondary,
     padding: 12,
     borderRadius: 8,
   },
@@ -532,84 +538,84 @@ const styles = StyleSheet.create({
   recipientName: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
   },
   recipientPhone: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     marginTop: 2,
   },
   fareContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#f0f8ff',
+    backgroundColor: theme.themeColors.brandLight,
     padding: 16,
     borderRadius: 8,
   },
   fareLabel: {
     fontSize: 16,
-    color: '#333',
+    color: theme.themeColors.textPrimary,
   },
   fareAmount: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#007AFF',
+    color: theme.themeColors.brand,
   },
   footer: {
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: '#eee',
+    borderTopColor: theme.themeColors.border,
   },
   actionButtons: {
     gap: 12,
   },
   deliveredButton: {
-    backgroundColor: '#34C759',
+    backgroundColor: theme.themeColors.success,
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
   },
   deliveredButtonText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 16,
     fontWeight: '600',
   },
   cancelButton: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: theme.themeColors.error,
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
   },
   cancelButtonText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 16,
     fontWeight: '600',
   },
   completedButton: {
-    backgroundColor: '#34C759',
+    backgroundColor: theme.themeColors.success,
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
   },
   completedButtonText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 18,
     fontWeight: '600',
   },
   cancelledButton: {
-    backgroundColor: '#666',
+    backgroundColor: theme.themeColors.textSecondary,
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
   },
   cancelledButtonText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 18,
     fontWeight: '600',
   },
   buttonDisabled: {
-    backgroundColor: '#ccc',
+    backgroundColor: theme.themeColors.disabled,
   },
 });
 

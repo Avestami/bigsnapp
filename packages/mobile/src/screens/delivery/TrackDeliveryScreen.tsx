@@ -12,6 +12,7 @@ import {
 import apiService from '../../services/api';
 import { useNavigation, NavigationProp, RouteProp } from '@react-navigation/native';
 import { MainStackParamList } from '../../navigation/types';
+import { useThemedStyles, useThemeColors } from '../../contexts/ThemeContext';
 
 type TrackDeliveryScreenNavigationProp = NavigationProp<MainStackParamList, 'TrackDelivery'>;
 type TrackDeliveryScreenRouteProp = RouteProp<MainStackParamList, 'TrackDelivery'>;
@@ -34,6 +35,8 @@ interface DeliveryStatus {
 }
 
 const TrackDeliveryScreen: React.FC<Props> = ({ navigation, route }) => {
+  const themeColors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const { deliveryId } = route.params;
   const [delivery, setDelivery] = useState<DeliveryStatus | null>(null);
   const [loading, setLoading] = useState(true);
@@ -165,10 +168,10 @@ const TrackDeliveryScreen: React.FC<Props> = ({ navigation, route }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.themeColors.backgroundSecondary,
   },
   content: {
     padding: 20,
@@ -177,23 +180,23 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.themeColors.backgroundSecondary,
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.themeColors.backgroundSecondary,
     padding: 20,
   },
   errorText: {
     fontSize: 18,
-    color: '#f44336',
+    color: theme.themeColors.error,
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -202,11 +205,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
   },
   deliveryId: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     textAlign: 'center',
     marginBottom: 20,
   },
@@ -220,12 +223,12 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   statusText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 16,
     fontWeight: '600',
   },
   section: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.background,
     borderRadius: 8,
     padding: 15,
     marginBottom: 15,
@@ -234,7 +237,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 15,
-    color: '#333',
+    color: theme.themeColors.textPrimary,
   },
   detailRow: {
     flexDirection: 'row',
@@ -243,29 +246,29 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     width: 100,
   },
   value: {
     fontSize: 16,
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     flex: 1,
   },
   button: {
-    backgroundColor: '#007bff',
+    backgroundColor: theme.themeColors.brand,
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
   },
   refreshButton: {
-    backgroundColor: '#28a745',
+    backgroundColor: theme.themeColors.success,
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 20,
   },
   buttonText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 16,
     fontWeight: '600',
   },

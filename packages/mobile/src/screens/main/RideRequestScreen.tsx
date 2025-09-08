@@ -13,6 +13,7 @@ import apiService from '../../services/api';
 import { useNavigation } from '@react-navigation/native';
 import { locationService, Location } from '../../services/locationService';
 import CustomMapView from '../../components/MapView';
+import { useThemedStyles, useThemeColors } from '../../contexts/ThemeContext';
 
 interface RideRequest {
   pickupLocation: Location | null;
@@ -23,6 +24,8 @@ interface RideRequest {
 
 const RideRequestScreen: React.FC = () => {
   const navigation = useNavigation();
+  const themeColors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const [rideRequest, setRideRequest] = useState<RideRequest>({
     pickupLocation: null,
     destination: null,
@@ -291,10 +294,10 @@ const RideRequestScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.background,
   },
   content: {
     flex: 1,
@@ -306,7 +309,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
   },
   locationContainer: {
     marginBottom: 20,
@@ -317,20 +320,20 @@ const styles = StyleSheet.create({
   locationLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     marginBottom: 8,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: theme.themeColors.border,
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: theme.themeColors.backgroundSecondary,
   },
   rideTypeSelector: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: theme.themeColors.border,
     borderRadius: 8,
     padding: 16,
     marginBottom: 20,
@@ -344,20 +347,20 @@ const styles = StyleSheet.create({
   rideTypeName: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
   },
   rideTypePrice: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     marginTop: 2,
   },
   rideTypeEta: {
     fontSize: 14,
-    color: '#007AFF',
+    color: theme.themeColors.brand,
     fontWeight: '500',
   },
   fareContainer: {
-    backgroundColor: '#f0f8ff',
+    backgroundColor: theme.themeColors.brandLight,
     padding: 16,
     borderRadius: 8,
     flexDirection: 'row',
@@ -366,29 +369,29 @@ const styles = StyleSheet.create({
   },
   fareLabel: {
     fontSize: 16,
-    color: '#333',
+    color: theme.themeColors.textPrimary,
   },
   fareAmount: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#007AFF',
+    color: theme.themeColors.brand,
   },
   footer: {
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: '#eee',
+    borderTopColor: theme.themeColors.border,
   },
   requestButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.themeColors.brand,
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
   },
   buttonDisabled: {
-    backgroundColor: '#ccc',
+    backgroundColor: theme.themeColors.disabled,
   },
   requestButtonText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 18,
     fontWeight: '600',
   },
@@ -398,7 +401,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
@@ -406,7 +409,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -416,13 +419,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: theme.themeColors.border,
     borderRadius: 8,
     marginBottom: 12,
   },
   selectedRideType: {
-    borderColor: '#007AFF',
-    backgroundColor: '#f0f8ff',
+    borderColor: theme.themeColors.brand,
+    backgroundColor: theme.themeColors.brandLight,
   },
   rideTypeDetails: {
     flex: 1,
@@ -430,16 +433,16 @@ const styles = StyleSheet.create({
   rideTypeOptionName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
   },
   rideTypeOptionPrice: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     marginTop: 2,
   },
   rideTypeOptionEta: {
     fontSize: 14,
-    color: '#007AFF',
+    color: theme.themeColors.brand,
     fontWeight: '500',
   },
   modalCloseButton: {
@@ -448,7 +451,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   modalCloseText: {
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     fontSize: 16,
   },
 });

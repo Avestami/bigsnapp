@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import apiService from '../../services/api';
+import { useThemedStyles, useThemeColors } from '../../contexts/ThemeContext';
 
 interface Transaction {
   id: string;
@@ -33,6 +34,8 @@ interface WalletData {
 
 const WalletScreen: React.FC = () => {
   const navigation = useNavigation();
+  const themeColors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const [walletData, setWalletData] = useState<WalletData>({
     balance: 1250.50,
     totalEarnings: 5420.00,
@@ -391,25 +394,25 @@ const WalletScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.themeColors.background,
   },
   content: {
     flex: 1,
   },
   header: {
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.surface,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
   },
   balanceCard: {
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.themeColors.brand,
     margin: 20,
     padding: 20,
     borderRadius: 16,
@@ -421,7 +424,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   balanceLabel: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 16,
     opacity: 0.9,
   },
@@ -432,12 +435,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   topupButtonText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 14,
     fontWeight: '600',
   },
   balanceAmount: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 32,
     fontWeight: 'bold',
     marginBottom: 20,
@@ -452,13 +455,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   statLabel: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 14,
     opacity: 0.8,
     marginBottom: 4,
   },
   statValue: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -468,7 +471,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
   transactionsContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.surface,
     margin: 20,
     marginTop: 0,
     borderRadius: 16,
@@ -480,7 +483,7 @@ const styles = StyleSheet.create({
   transactionsTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     marginBottom: 12,
   },
   filterContainer: {
@@ -491,18 +494,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: theme.themeColors.backgroundSecondary,
   },
   filterButtonActive: {
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.themeColors.brand,
   },
   filterButtonText: {
     fontSize: 12,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     fontWeight: '500',
   },
   filterButtonTextActive: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
   },
   transactionItem: {
     flexDirection: 'row',
@@ -519,7 +522,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: theme.themeColors.backgroundSecondary,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -532,12 +535,12 @@ const styles = StyleSheet.create({
   },
   transactionDescription: {
     fontSize: 16,
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     fontWeight: '500',
   },
   transactionDate: {
     fontSize: 12,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     marginTop: 2,
   },
   transactionStatus: {
@@ -565,7 +568,7 @@ const styles = StyleSheet.create({
   },
   transactionSeparator: {
     height: 1,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: theme.themeColors.border,
     marginVertical: 8,
   },
   emptyContainer: {
@@ -574,7 +577,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
   },
   modalOverlay: {
     flex: 1,
@@ -583,7 +586,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.surface,
     borderRadius: 16,
     padding: 24,
     width: '90%',
@@ -592,7 +595,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     textAlign: 'center',
     marginBottom: 24,
   },
@@ -600,21 +603,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#007AFF',
+    borderColor: theme.themeColors.brand,
     borderRadius: 8,
     paddingHorizontal: 16,
     marginBottom: 24,
   },
   currencySymbol: {
     fontSize: 24,
-    color: '#007AFF',
+    color: theme.themeColors.brand,
     fontWeight: 'bold',
     marginRight: 8,
   },
   amountInput: {
     flex: 1,
     fontSize: 24,
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     paddingVertical: 12,
   },
   quickAmountsContainer: {
@@ -623,7 +626,7 @@ const styles = StyleSheet.create({
   quickAmountsTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     marginBottom: 12,
   },
   quickAmountsGrid: {
@@ -632,7 +635,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   quickAmountButton: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: theme.themeColors.backgroundSecondary,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
@@ -641,7 +644,7 @@ const styles = StyleSheet.create({
   },
   quickAmountText: {
     fontSize: 14,
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     fontWeight: '500',
   },
   modalActions: {
@@ -650,30 +653,30 @@ const styles = StyleSheet.create({
   },
   modalCancelButton: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: theme.themeColors.backgroundSecondary,
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
   },
   modalCancelText: {
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     fontSize: 16,
     fontWeight: '600',
   },
   modalConfirmButton: {
     flex: 1,
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.themeColors.brand,
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
   },
   modalConfirmText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 16,
     fontWeight: '600',
   },
   buttonDisabled: {
-    backgroundColor: '#ccc',
+    backgroundColor: theme.themeColors.disabled,
   },
 });
 

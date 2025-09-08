@@ -14,6 +14,7 @@ import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/types';
 import apiService from '../../services/api';
+import { useThemedStyles, useThemeColors } from '../../contexts/ThemeContext';
 
 type RequestDeliveryScreenNavigationProp = NavigationProp<RootStackParamList, 'RequestDelivery'>;
 
@@ -22,6 +23,8 @@ interface Props {
 }
 
 const RequestDeliveryScreen: React.FC<Props> = ({ navigation }) => {
+  const themeColors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const [pickupAddress, setPickupAddress] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [packageDescription, setPackageDescription] = useState('');
@@ -168,10 +171,10 @@ const RequestDeliveryScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.themeColors.backgroundSecondary,
   },
   content: {
     padding: 20,
@@ -181,7 +184,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
   },
   inputContainer: {
     marginBottom: 15,
@@ -190,29 +193,29 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 5,
-    color: '#333',
+    color: theme.themeColors.textPrimary,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: theme.themeColors.border,
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    backgroundColor: '#fff',
-    color: '#333',
+    backgroundColor: theme.themeColors.background,
+    color: theme.themeColors.textPrimary,
   },
   button: {
-    backgroundColor: '#007bff',
+    backgroundColor: theme.themeColors.brand,
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 20,
   },
   buttonDisabled: {
-    backgroundColor: '#ccc',
+    backgroundColor: theme.themeColors.disabled,
   },
   buttonText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 16,
     fontWeight: '600',
   },

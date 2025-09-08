@@ -14,6 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAdmin } from '../../contexts/AdminContext';
 import { User } from '../../services/adminApi';
+import { useThemedStyles, useThemeColors } from '../../contexts/ThemeContext';
 
 // Debug logging utility
 const debugLog = (component: string, action: string, data?: any) => {
@@ -31,6 +32,8 @@ const errorLog = (component: string, action: string, error: any) => {
 const AdminUserManagement: React.FC = () => {
   const navigation = useNavigation();
   const { user } = useAuth();
+  const themeColors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
   const {
     users,
     usersLoading: loading,
@@ -289,10 +292,10 @@ const AdminUserManagement: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.themeColors.background,
   },
   loadingContainer: {
      flex: 1,
@@ -303,7 +306,7 @@ const styles = StyleSheet.create({
    loadingText: {
      marginTop: 10,
      fontSize: 16,
-     color: '#666',
+     color: theme.themeColors.textSecondary,
    },
    errorContainer: {
      flex: 1,
@@ -313,12 +316,12 @@ const styles = StyleSheet.create({
    },
    errorText: {
      fontSize: 16,
-     color: '#F44336',
+     color: theme.themeColors.error,
      textAlign: 'center',
      marginBottom: 20,
    },
   header: {
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.themeColors.brand,
     padding: 20,
     paddingTop: 60,
     flexDirection: 'row',
@@ -328,49 +331,51 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   backButtonText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 16,
     fontWeight: '500',
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#fff',
+    color: theme.themeColors.textInverse,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.surface,
   },
   searchInput: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: theme.themeColors.border,
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
+    backgroundColor: theme.themeColors.backgroundSecondary,
+    color: theme.themeColors.textPrimary,
     marginRight: 10,
   },
   searchButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.themeColors.brand,
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 8,
   },
   searchButtonText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontWeight: '600',
   },
   retryButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.themeColors.brand,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 8,
     marginTop: 10,
   },
   retryButtonText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontWeight: '600',
   },
   paginationContainer: {
@@ -378,62 +383,62 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 15,
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.surface,
     borderTopWidth: 1,
-    borderTopColor: '#eee',
+    borderTopColor: theme.themeColors.border,
   },
   paginationButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.themeColors.brand,
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderRadius: 6,
   },
   disabledButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: theme.themeColors.disabled,
   },
   paginationButtonText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontWeight: '600',
   },
   paginationText: {
     fontSize: 16,
-    color: '#333',
+    color: theme.themeColors.textPrimary,
   },
   filterContainer: {
     flexDirection: 'row',
     padding: 15,
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: theme.themeColors.border,
   },
   filterButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: theme.themeColors.backgroundSecondary,
     marginRight: 10,
   },
   filterButtonActive: {
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.themeColors.brand,
   },
   filterButtonText: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     fontWeight: '500',
   },
   filterButtonTextActive: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
   },
   usersList: {
     flex: 1,
     padding: 15,
   },
   userCard: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.surface,
     borderRadius: 8,
     padding: 15,
     marginBottom: 10,
-    shadowColor: '#000',
+    shadowColor: theme.themeColors.shadow,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -448,17 +453,17 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     marginBottom: 5,
   },
   userEmail: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     marginBottom: 3,
   },
   userPhone: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
     marginBottom: 10,
   },
   userTags: {
@@ -503,7 +508,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
   },
 });
 

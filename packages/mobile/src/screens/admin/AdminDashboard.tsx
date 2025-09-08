@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../contexts/AuthContext';
+import { useThemedStyles, useThemeColors } from '../../contexts/ThemeContext';
 
 // Debug logging utilities
 const debugLog = (action: string, data?: any) => {
@@ -30,6 +31,8 @@ const errorLog = (action: string, error: any) => {
 const AdminDashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const navigation = useNavigation();
+  const themeColors = useThemeColors();
+  const styles = useThemedStyles(createStyles);
 
   debugLog('Component loaded', {
     hasUser: !!user,
@@ -141,36 +144,36 @@ const AdminDashboard: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.themeColors.background,
   },
   header: {
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.themeColors.brand,
     padding: 20,
     paddingTop: 60,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     marginBottom: 5,
   },
   subtitle: {
     fontSize: 16,
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     opacity: 0.9,
   },
   content: {
     padding: 20,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.themeColors.surface,
     borderRadius: 8,
     padding: 20,
     marginBottom: 15,
-    shadowColor: '#000',
+    shadowColor: theme.themeColors.shadow,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -182,22 +185,22 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    color: theme.themeColors.textPrimary,
     marginBottom: 5,
   },
   cardDescription: {
     fontSize: 14,
-    color: '#666',
+    color: theme.themeColors.textSecondary,
   },
   logoutButton: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: theme.themeColors.error,
     margin: 20,
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
   },
   logoutButtonText: {
-    color: '#fff',
+    color: theme.themeColors.textInverse,
     fontSize: 16,
     fontWeight: '600',
   },
